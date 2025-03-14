@@ -1,0 +1,172 @@
+body{
+    background-color: #1e1e1e;
+
+}
+footer{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    height: 50px;
+    width: 100%;
+    align-items: center;
+    flex-basis: 100px;
+    color: white;
+    gap: 10px;
+    margin-top: 10px;
+    border-bottom: 1px solid #ffffff;
+
+}
+footer input{
+    width: 80px;
+    height: 30px;
+    background: #f24236;
+    color: white;
+    border: 1px solid #454545;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.project-container{
+    border-top: 1px solid black;
+    height: 100vh;
+
+}
+ .title h1{
+     color: #027afd;
+ }
+
+ .control-container{
+     display: grid;
+     height: 50px;
+     grid-template-rows: 50px 50px 50px;
+     grid-template-columns: 150px auto 150px;
+     gap: 30px;
+
+
+ }
+ .control-container button, .control-container input, .control-container select{
+     width: 100%;
+     height: 35px;
+     border: 1px solid #454545;
+     border-radius: 5px;
+ }
+.control-container select option{
+    background: #b2b3b3;
+}
+.control-container button{
+    background: #027afd;
+    color: white;
+}
+
+.control-container input{
+
+    min-width: 150px;
+}
+.project-list{
+    display: grid;
+    gap: 20px;
+    width: 90%;
+
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+
+}
+
+.project-item{
+
+    background-color: #333333;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #838383;
+    transition: width 0.3s ease-in-out;
+    min-width: 300px;
+    max-width: 300px;
+    box-shadow: 0 0 10px 0 #000000;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.project-item:hover{
+    border: 2px solid #027afd;
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+    gap: 10px;
+}
+
+.start-date, .end-date {
+    font-size: 14px;
+    color: white;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 15px;
+    background-color: #444444;
+    border-radius: 7px;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: #027afd;
+    border-radius: 7px;
+    text-align: center;
+    color: white;
+    font-size: 12px;
+    line-height: 15px;
+}
+.add-project-container{
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 32%;
+    height: 100vh;
+    width: 36%;
+    color: white;
+    padding: 5px;
+    border: 1px solid #454545;
+    border-radius: 10px;
+    background-color: #1e1e1e;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.add-content{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 99%;
+}
+.AP-header{
+    display: flex;
+    justify-content: space-between;
+}
+.material-symbols-outlined:hover{
+    color: #f24236;
+    cursor: pointer;
+}
+.add-project-container input,button,select{
+    width: 100%;
+    height: 30px;
+    border-radius: 5px;
+    color: white;
+    background-color: #454545;
+    padding: 1px;
+}
+.add-project-container textarea {
+    width: 100%;
+    height: 100px;
+    border-radius: 7px;
+    resize: none;
+    color: white;
+    background-color: #454545;
+}
+.add-project-container button{
+    background: #4cae50;
+}
+#project-students{
+    height: 80px;
+}
