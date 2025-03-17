@@ -1,6 +1,10 @@
 let selectedProjectItem = null;
 let activeContact = null;
-let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser")) || null;
+let loggedInUser = JSON.parse(
+    localStorage.getItem("loggedInUser") ||
+    "null"
+);
+
 let studentRole = false;
 document.addEventListener("DOMContentLoaded", function () {
    let isStudentCheckbox = document.getElementById("isStudent");
@@ -9,15 +13,17 @@ document.addEventListener("DOMContentLoaded", function () {
    isStudentCheckbox.addEventListener("change", function () {
       studentContainer.style.display = this.checked ? "flex" : "none";
    });
+   generateLargeTestData();
    updateDateTime();
    loadData();
 
-   loadTasks();
+
 });
 function studentSite(){
    document.getElementById("number-of-students").style.display = "none";
    document.getElementById("addProject").style.display = "none";
    document.getElementById("control-container").style.gridTemplateColumns = "auto 150px";
+   document.getElementById("new-task-btn").style.display = "none";
 }
 function SignUpForm(){
    document.getElementById("SignIn-Container").style.display = "none"
@@ -60,17 +66,17 @@ function signIn() {
    const user = users.find(u => u.username === username && u.password === password);
    if (user) {
       localStorage.setItem("loggedInUser", JSON.stringify(user));
-       loggedInUser = user;
-       if(user.role === "student"){
-          studentRole = true;
-          studentSite();
-       }
+      loggedInUser = user;
+      if(user.role === "student"){
+         studentRole = true;
+         studentSite();
+      }
       document.getElementById("user-name").innerHTML=`${user.role}  ${user.username} `;
       homePage();
       displayChart();
       displayDashboard();
       displayProjects();
-
+      loadTasks()
    } else {
       alert("Invalid username or password.");
    }
@@ -95,7 +101,7 @@ function displayDashboard(){
    let finished = projects.filter(project => project.status === "Completed");
    let studentProjects = projects.filter(project => project.students.includes(loggedInUser.username));
    let studentFinished = studentProjects.filter(project => project.status === "Completed");
-   let studentTask = tasks.filter(task => task.assignedStudent === loggedInUser.username);
+   let studentTask = tasks.filter(task => task.assigned === loggedInUser.username);
    if(!studentRole){
       document.getElementById("num-pro").innerHTML = `${projects.length}`;
       document.getElementById("num-stu").innerHTML = `${students.length}`;
@@ -410,15 +416,35 @@ function displayProjectInfo(project) {
    const projectInfoContainer = document.getElementById("project-info-container");
    projectInfoContainer.style.display = "flex";
    const infoDiv = projectInfoContainer.querySelector(".info");
+   document.getElementById("project-info-title").innerHTML = `${project.title}`;
    infoDiv.innerHTML = `
-      <p><span>Title: </span>${project.title}</p>
       <p><span>Description: </span>${project.description}</p>
       <p><span>Category: </span>${project.category}</p>
       <p><span>Students: </span>${Array.isArray(project.students) ? project.students.join(", ") : project.students}</p>
       <p><span>Start Date: </span>${project.startDate}</p>
       <p><span>Ending Date: </span>${project.endDate}</p>
-      <p><span>Project Status:</span>${project.status}</p>
+      <p><span>Project Status:</span> ${project.status}</p>
    `;
+   const tasksInfoContainer = document.getElementById("tasks-info-container");
+   tasksInfoContainer.innerHTML = `
+      <div class="info-title">
+         <h1>Tasks</h1>
+      </div>
+   `;
+   const allTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+   const projectTasks = allTasks.filter(task => task.project === project.title);
+   projectTasks.forEach(task => {
+      const taskItem = document.createElement("div");
+      taskItem.classList.add("tasks-info-item");
+      taskItem.innerHTML = `
+         <h4>Task ID: <span class="task-id">${task.id}</span></h4>
+         <h4>Task Name: <span class="task-name">${task.task}</span></h4>
+         <h4>Task Description: <span class="task-description">${task.description}</span></h4>
+         <h4>Task Assigned: <span class="task-assigned">${task.assigned}</span></h4>
+         <h4>Task Status: <span class="task-status">${task.status}</span></h4>
+      `;
+      tasksInfoContainer.appendChild(taskItem);
+   });
 }
 document.addEventListener("DOMContentLoaded", function () {
    let searchInput = document.getElementById("search-input");
@@ -431,10 +457,16 @@ document.addEventListener("DOMContentLoaded", function () {
    }
 });
 function searchProjects(query) {
-   let projects = JSON.parse(localStorage.getItem("projects")) || [];
+   let projects;
+   if(studentRole){
+      let dummy = JSON.parse(localStorage.getItem("projects")) || [];
+      let studentProjects = dummy.filter(project => project.students.includes(loggedInUser.username)) || [];
+      projects = studentProjects.filter(project => project.students.includes(loggedInUser.username) || []);
+   }else{
+      projects = JSON.parse(localStorage.getItem("projects")) || [];
+   }
    let projectContainer = document.querySelector(".project-list");
    projectContainer.innerHTML = "";
-
    let filteredProjects = projects.filter(project =>
        project.title.toLowerCase().includes(query) ||
        project.description.toLowerCase().includes(query)
@@ -442,7 +474,7 @@ function searchProjects(query) {
 
    filteredProjects.forEach(project => {
       let progressPercentage = getProgressPercentage(project.status);
-      let studentNames = filteredProjects.students;
+      let studentNames = Array.isArray(filteredProjects.students) ? project.students.join(", ") : project.students
       let projectElement = document.createElement("div");
       projectElement.classList.add("project-item");
       projectElement.innerHTML = `
@@ -466,6 +498,24 @@ function searchProjects(query) {
                 <span class="end-date">${project.endDate}</span>
             </div>
         `;
+      projectElement.addEventListener("click", function() {
+         if (selectedProjectItem && selectedProjectItem !== this) {
+            selectedProjectItem.style.border = "1px solid #027afd";
+         }
+         this.style.border = "2px solid orange";
+         selectedProjectItem = this;
+         displayProjectInfo(project);
+      });
+      projectElement.addEventListener("mouseenter", function() {
+         if (this !== selectedProjectItem) {
+            this.style.border = "1px solid #027afd";
+         }
+      });
+      projectElement.addEventListener("mouseleave", function() {
+         if (this !== selectedProjectItem) {
+            this.style.border = "1px solid #838383";
+         }
+      });
       projectContainer.appendChild(projectElement);
    });
 }
@@ -480,16 +530,21 @@ document.addEventListener("DOMContentLoaded", function () {
    }
 });
 function filterProjects(status) {
-   let projects = JSON.parse(localStorage.getItem("projects")) || [];
+   let projects;
+   if(studentRole){
+      let dummy = JSON.parse(localStorage.getItem("projects")) || [];
+      let studentProjects = dummy.filter(project => project.students.includes(loggedInUser.username)) || [];
+      projects = studentProjects.filter(project => project.students.includes(loggedInUser.username) || []);
+   }else{
+      projects = JSON.parse(localStorage.getItem("projects")) || [];
+   }
    let projectContainer = document.querySelector(".project-list");
    projectContainer.innerHTML = "";
    let filteredProjects = status === "All Statuses" ? projects : projects.filter(p => p.status === status);
    filteredProjects.forEach(project => {
       let progressPercentage = getProgressPercentage(project.status);
       let projectElement = document.createElement("div");
-      let studentNames = Array.isArray(project.students)
-          ? project.students.map(student => student.username).join(", ")
-          : "N/A";
+      let studentNames = Array.isArray(project.students) ? project.students.join(", ") : project.students
       projectElement.classList.add("project-item");
       projectElement.innerHTML = `
             <div class="project-title">
@@ -512,6 +567,24 @@ function filterProjects(status) {
                 <span class="end-date">${project.endDate}</span>
             </div>
         `;
+      projectElement.addEventListener("click", function() {
+         if (selectedProjectItem && selectedProjectItem !== this) {
+            selectedProjectItem.style.border = "1px solid #027afd";
+         }
+         this.style.border = "2px solid orange";
+         selectedProjectItem = this;
+         displayProjectInfo(project);
+      });
+      projectElement.addEventListener("mouseenter", function() {
+         if (this !== selectedProjectItem) {
+            this.style.border = "1px solid #027afd";
+         }
+      });
+      projectElement.addEventListener("mouseleave", function() {
+         if (this !== selectedProjectItem) {
+            this.style.border = "1px solid #838383";
+         }
+      });
       projectContainer.appendChild(projectElement);
    });
 }
@@ -525,14 +598,17 @@ function CloseProInfo() {
    });
 }
 function loadTasks() {
-   // 1. Read tasks from localStorage
-   let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-
-   // 2. Clear existing table rows
+   let tasks;
+   if (studentRole) {
+      let dummy = JSON.parse(localStorage.getItem("tasks")) || [];
+      tasks = dummy.filter(task => task.assigned === loggedInUser.username);
+      alert("Student");
+   } else {
+      alert("Admin");
+      tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+   }
    let tableBody = document.getElementById("task-table-body");
    tableBody.innerHTML = "";
-
-   // 3. Create a row for each task
    tasks.forEach(task => {
       let row = document.createElement("tr");
       row.innerHTML = `
@@ -547,7 +623,6 @@ function loadTasks() {
       tableBody.appendChild(row);
    });
 }
-
 function sortTasks() {
    let table = document.getElementById("task-table-body");
    let rows = Array.from(table.rows);
@@ -690,4 +765,226 @@ function selectContact(contactUsername) {
    activeContact = contactUsername;
    document.getElementById("active-contact").textContent = contactUsername;
    loadMessages();
+}
+
+function generateLargeTestData() {
+   // Prevent multiple generations
+   if (localStorage.getItem("largeTestDataGenerated")) {
+      console.log("Large test data has already been generated.");
+      return;
+   }
+
+   // --- USERS ---
+
+   // 10 realistic admin names
+   const adminNames = [
+      "John Doe", "Jane Smith", "Michael Johnson", "Emily Davis", "William Brown",
+      "Olivia Wilson", "James Taylor", "Sophia Anderson", "Robert Thomas", "Isabella Martinez"
+   ];
+
+   // 40 realistic student names
+   const studentNames = [
+      "Liam Miller", "Noah Garcia", "Oliver Rodriguez", "Elijah Martinez", "William Hernandez",
+      "James Lopez", "Benjamin Gonzalez", "Lucas Wilson", "Henry Anderson", "Alexander Thomas",
+      "Mason Taylor", "Michael Moore", "Ethan Jackson", "Daniel Martin", "Jacob Lee",
+      "Logan Perez", "Jackson Thompson", "Sebastian White", "Jack Harris", "Aiden Sanchez",
+      "Owen Clark", "Samuel Ramirez", "Matthew Lewis", "Joseph Robinson", "Levi Walker",
+      "Mateo Young", "David Allen", "John King", "Wyatt Wright", "Carter Scott",
+      "Julian Torres", "Luke Nguyen", "Grayson Hill", "Isaac Flores", "Jayden Green",
+      "Theodore Adams", "Gabriel Nelson", "Anthony Baker", "Dylan Hall", "Leo Rivera"
+   ];
+
+   const users = [];
+   // Create admin users
+   adminNames.forEach((name, index) => {
+      users.push({
+         id: index + 1,
+         username: name.toLowerCase().replace(/ /g, ""),
+         password: "admin" + (index + 1),
+         role: "admin"
+      });
+   });
+   // Create student users
+   studentNames.forEach((name, index) => {
+      users.push({
+         id: adminNames.length + index + 1,
+         username: name.toLowerCase().replace(/ /g, ""),
+         password: "student" + (index + 1),
+         role: "student"
+      });
+   });
+
+   // --- PROJECTS ---
+
+   const categories = ["Web Development", "Mobile App Development", "Cybersecurity", "Cloud Computing", "Artificial Intelligence", "Data Science", "Internet of Things", "Embedded Systems", "Digital Marketing", "E-commerce", "Blockchain"];
+   const statuses = ["In Progress", "Pending", "Completed", "On Hold", "Cancelled"];
+   // Some words to generate more realistic project titles and descriptions
+   const adjectives = ["Innovative", "Modern", "Dynamic", "Cutting-Edge", "Advanced", "Scalable", "Efficient", "Robust", "Interactive", "Responsive"];
+   const nouns = ["Solution", "Platform", "System", "Application", "Framework", "Interface", "Network", "Tool", "Module", "Service"];
+   const projects = [];
+
+   for (let i = 0; i < 100; i++) {
+      const title = `Project ${i + 1}: ${adjectives[Math.floor(Math.random() * adjectives.length)]} ${nouns[Math.floor(Math.random() * nouns.length)]}`;
+      const description = `This project focuses on developing a ${title.toLowerCase()} aimed at improving user engagement and operational efficiency.`;
+
+      // Randomly choose between 1 and 5 students from the studentNames list
+      const numStudents = Math.floor(Math.random() * 5) + 1;
+      const assignedStudents = [];
+      while (assignedStudents.length < numStudents) {
+         const randomStudent = studentNames[Math.floor(Math.random() * studentNames.length)].toLowerCase().replace(/ /g, "");
+         if (!assignedStudents.includes(randomStudent)) {
+            assignedStudents.push(randomStudent);
+         }
+      }
+
+      // Generate random dates in 2023
+      const start = new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1);
+      const end = new Date(start.getTime() + (Math.floor(Math.random() * 90) + 30) * 24 * 60 * 60 * 1000); // 30 to 120 days later
+
+      projects.push({
+         id: i + 1,
+         title: title,
+         description: description,
+         students: assignedStudents,
+         category: categories[Math.floor(Math.random() * categories.length)],
+         startDate: start.toISOString().split("T")[0],
+         endDate: end.toISOString().split("T")[0],
+         status: statuses[Math.floor(Math.random() * statuses.length)]
+      });
+   }
+
+   // --- TASKS ---
+
+   const taskStatuses = ["In Progress", "Pending", "Completed", "On Hold", "Cancelled"];
+   const tasks = [];
+   for (let i = 0; i < 200; i++) {
+      // Randomly assign a project from the projects array
+      const randomProject = projects[Math.floor(Math.random() * projects.length)];
+      const taskTitle = `Task ${i + 1}: ${nouns[Math.floor(Math.random() * nouns.length)]} Implementation`;
+      const taskDescription = `Implement a critical component of the project "${randomProject.title}".`;
+
+      // Randomly choose one student from the project's assigned students (if any)
+      let assignedUser = "";
+      if (randomProject.students.length > 0) {
+         assignedUser = randomProject.students[Math.floor(Math.random() * randomProject.students.length)];
+      } else {
+         assignedUser = studentNames[Math.floor(Math.random() * studentNames.length)].toLowerCase().replace(/ /g, "");
+      }
+
+      // Generate a due date sometime after the project's start date
+      const projectStart = new Date(randomProject.startDate);
+      const due = new Date(projectStart.getTime() + (Math.floor(Math.random() * 60) + 15) * 24 * 60 * 60 * 1000);
+
+      tasks.push({
+         id: i + 1,
+         project: randomProject.title,
+         task: taskTitle,
+         description: taskDescription,
+         assigned: assignedUser,
+         status: taskStatuses[Math.floor(Math.random() * taskStatuses.length)],
+         due: due.toISOString().split("T")[0]
+      });
+   }
+
+   // --- CHAT MESSAGES ---
+
+   // We'll generate 100 chat messages between random admins and students.
+   const sampleTexts = [
+      "Please review the latest updates.",
+      "Can you update the project status?",
+      "I have completed my task.",
+      "Let's schedule a meeting.",
+      "Need more details on the requirements.",
+      "The deadline is approaching.",
+      "Great work on the project!",
+      "I will get back to you soon.",
+      "Can we discuss this further?",
+      "Thank you for your prompt response."
+   ];
+   const messages = [];
+   for (let i = 0; i < 100; i++) {
+      // Randomly choose sender type: admin or student
+      const isAdminSender = Math.random() < 0.5;
+      let from, to;
+      if (isAdminSender) {
+         from = adminNames[Math.floor(Math.random() * adminNames.length)].toLowerCase().replace(/ /g, "");
+         to = studentNames[Math.floor(Math.random() * studentNames.length)].toLowerCase().replace(/ /g, "");
+      } else {
+         from = studentNames[Math.floor(Math.random() * studentNames.length)].toLowerCase().replace(/ /g, "");
+         to = adminNames[Math.floor(Math.random() * adminNames.length)].toLowerCase().replace(/ /g, "");
+      }
+      // Generate a random timestamp in 2023
+      const randomTime = new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1, Math.floor(Math.random() * 24), Math.floor(Math.random() * 60), Math.floor(Math.random() * 60));
+      messages.push({
+         from: from,
+         to: to,
+         text: sampleTexts[Math.floor(Math.random() * sampleTexts.length)],
+         timestamp: randomTime.toISOString()
+      });
+   }
+
+   // Save all generated data to localStorage
+   localStorage.setItem('users', JSON.stringify(users));
+   localStorage.setItem('projects', JSON.stringify(projects));
+   localStorage.setItem('tasks', JSON.stringify(tasks));
+   localStorage.setItem('messages', JSON.stringify(messages));
+   localStorage.setItem('largeTestDataGenerated', 'true');
+
+   // --- Generate a human-readable text file for testers ---
+   let content = "LARGE TEST DATA FOR WEBSITE\n";
+   content += "============================\n\n";
+
+   content += "USERS:\n";
+   users.forEach(user => {
+      content += `ID: ${user.id}, Username: ${user.username}, Password: ${user.password}, Role: ${user.role}\n`;
+   });
+   content += "\n";
+
+   content += "PROJECTS:\n";
+   projects.forEach(project => {
+      content += `ID: ${project.id}\n`;
+      content += `Title: ${project.title}\n`;
+      content += `Description: ${project.description}\n`;
+      content += `Students: ${project.students.join(", ")}\n`;
+      content += `Category: ${project.category}\n`;
+      content += `Start Date: ${project.startDate}\n`;
+      content += `End Date: ${project.endDate}\n`;
+      content += `Status: ${project.status}\n`;
+      content += "----------------------------\n";
+   });
+   content += "\n";
+
+   content += "TASKS:\n";
+   tasks.forEach(task => {
+      content += `ID: ${task.id}\n`;
+      content += `Project: ${task.project}\n`;
+      content += `Task: ${task.task}\n`;
+      content += `Description: ${task.description}\n`;
+      content += `Assigned: ${task.assigned}\n`;
+      content += `Status: ${task.status}\n`;
+      content += `Due: ${task.due}\n`;
+      content += "----------------------------\n";
+   });
+   content += "\n";
+
+   content += "MESSAGES:\n";
+   messages.forEach(message => {
+      content += `From: ${message.from}, To: ${message.to}\n`;
+      content += `Text: ${message.text}\n`;
+      content += `Timestamp: ${message.timestamp}\n`;
+      content += "----------------------------\n";
+   });
+
+   // Create a Blob and trigger download of the text file
+   const blob = new Blob([content], { type: 'text/plain' });
+   const url = URL.createObjectURL(blob);
+   const a = document.createElement('a');
+   a.href = url;
+   a.download = 'largeTestData.txt';
+   document.body.appendChild(a);
+   a.click();
+   document.body.removeChild(a);
+   URL.revokeObjectURL(url);
+
+   alert("Large test data generated, stored in localStorage, and downloaded as largeTestData.txt");
 }

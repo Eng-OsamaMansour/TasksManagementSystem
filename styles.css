@@ -1,6 +1,7 @@
 body{
     background-color: #1e1e1e;
-
+    margin: 0;
+    font-family: Arial, sans-serif;
 }
 .main-container{
     display: flex;
@@ -280,7 +281,6 @@ body{
     background-color: #1e1e1e;
     box-shadow: -5px 0 0 rgba(0, 0, 0, 0.3);
     overflow-y: auto;
-
 }
 .basic-info{
     display: flex;
