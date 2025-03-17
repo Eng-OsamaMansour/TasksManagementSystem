@@ -32,7 +32,7 @@
                 <input type="checkbox" id="stay">
                 <label for="stay">Stay Signed in</label>
             </div>
-            <button type="button" onclick="homePage()">Sign In</button>
+            <button type="button" onclick="signIn()">Sign In</button>
             <h6>I dont have account? <a href="#" onclick="SignUpForm()">Sing Up</a></h6>
         </form>
     </div>
@@ -40,9 +40,9 @@
         <form id="SignUp-Form" class="SignUp-Form">
             <h2>Sign Up</h2>
             <label for="Sign-Up-username">Username</label>
-            <input type="text" id="Sign-Up-username" name="username" >
+            <input type="text" id="Sign-Up-username" name="username" required>
             <label for="Sign-Up-password">Password</label>
-            <input type="password" id="Sign-Up-password" name="password" >
+            <input type="password" id="Sign-Up-password" name="password" required>
             <div class="checkbox-container">
                 <input type="checkbox" id="isStudent">
                 <label for="isStudent">I am a student</label>
@@ -51,7 +51,7 @@
                 <label for="universityID">University ID</label>
                 <input type="text" id="universityID" name="universityID">
             </div>
-            <button type="button">Sign Up</button>
+            <button type="button" onclick="signUp()">Sign Up</button>
             <h6>I already have account <a href="#" onclick="SignInForm()">Sing In</a></h6>
         </form>
     </div>
@@ -75,16 +75,16 @@
         </div>
         <div class="dashboard">
             <div class="dashboard-content">
-                <h3>Number Of Projects <span id="num-pro"> 5 </span></h3>
+                <h3>Number Of Projects <span id="num-pro">  </span></h3>
+            </div>
+            <div class="dashboard-content" id="number-of-students">
+                <h3>Number Of Students <span id="num-stu">  </span></h3>
             </div>
             <div class="dashboard-content">
-                <h3>Number Of Students <span id="num-stu"> 20 </span></h3>
+                <h3>Number Of Tasks <span id="num-ts">  </span></h3>
             </div>
             <div class="dashboard-content">
-                <h3>Number Of Tasks <span id="num-ts"> 10 </span></h3>
-            </div>
-            <div class="dashboard-content">
-                <h3>Number Of Finished Projects <span id="num-fp"> 2 </span></h3>
+                <h3>Number Of Finished Projects <span id="num-fp">  </span></h3>
             </div>
         </div>
         <div class="chart-container">
@@ -95,9 +95,9 @@
         <div class="title">
             <h1> Projects Overview </h1>
         </div>
-        <div class="control-container">
-            <button onclick="AddNewProject()" value="Add Project">Add New Project</button>
-            <input type="text" placeholder="Search projects by title or description...">
+        <div class="control-container" id="control-container">
+            <button onclick="AddNewProject()" id="addProject" value="Add Project">Add New Project</button>
+            <input type="text" id="search-input" placeholder="Search projects by title or description...">
             <select name="filter" id="filter">
                 <option value="All Statuses">All Statuses</option>
                 <option value="In Progress">In Progress</option>
@@ -150,80 +150,18 @@
                     <span class="end-date">2026-09-01</span>
                 </div>
             </div>
-            <div class="project-item">
-                <div class="project-title">
-                    <h2> Project Title </h2>
-                </div>
-                <div class="project-description">
-                    <p> Project Description: </p>
-                </div>
-                <div class="students">
-                    <p> Students </p>
-                </div>
-                <div class="category">
-                    <p> Category </p>
-                </div>
-                <div class="progress-container">
-                    <span class="start-date">2023-04-01</span>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 56%;">56%</div>
-                    </div>
-                    <span class="end-date">2026-09-01</span>
-                </div>
+        </div>
+    </div>
+    <div id="add-project" class="task-create-container">
+        <div class="task-create-header">
+            <div class="title">
+                <h1>Add New Project</h1>
             </div>
-            <div class="project-item">
-                <div class="project-title">
-                    <h2> Project Title </h2>
-                </div>
-                <div class="project-description">
-                    <p> Project Description: </p>
-                </div>
-                <div class="students">
-                    <p> Students </p>
-                </div>
-                <div class="category">
-                    <p> Category </p>
-                </div>
-                <div class="progress-container">
-                    <span class="start-date">2023-04-01</span>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 56%;">56%</div>
-                    </div>
-                    <span class="end-date">2026-09-01</span>
-                </div>
-            </div>
-            <div class="project-item">
-                <div class="project-title">
-                    <h2> Project Title </h2>
-                </div>
-                <div class="project-description">
-                    <p> Project Description: </p>
-                </div>
-                <div class="students">
-                    <p> Students </p>
-                </div>
-                <div class="category">
-                    <p> Category </p>
-                </div>
-                <div class="progress-container">
-                    <span class="start-date">2023-04-01</span>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 56%;">56%</div>
-                    </div>
-                    <span class="end-date">2026-09-01</span>
-                </div>
+            <div class="close-button">
+                <span class="material-symbols-outlined" onclick="CloseAddP()">close</span>
             </div>
         </div>
-        <div id="add-project" class="add-project-container">
-            <div class="add-content">
-                <div class="AP-header">
-                    <div class="title">
-                        <h1>Add New Project</h1>
-                    </div>
-                    <div class="close-button">
-                        <span class="material-symbols-outlined" onclick="CloseAddP()">close</span>
-                    </div>
-                </div>
+            <div class="task-create-form">
                 <label for="project-title">
                     project title:
                 </label>
@@ -236,18 +174,18 @@
                     project students:
                 </label>
                 <select id="project-students" multiple >
-                    <option value="1">Student 1</option>
-                    <option value="2">Student 2</option>
-                    <option value="3">Student 3</option>
-                    <option value="4">Student 4</option>
+                    <option value="1">Student</option>
                 </select>
                 <label for="project-category">
                     project category:
                 </label>
                 <select id="project-category">
-                    <option value="1">Category 1</option>
-                    <option value="2">Category 2</option>
-                    <option value="3">Category 3</option>
+                    <option value="Artificial Intelligence">Artificial Intelligence</option>
+                    <option value="Web Development">Web Development</option>
+                    <option value="Cybersecurity">Cybersecurity</option>
+                    <option value="Mobile App Development">Mobile App Development</option>
+                    <option value="Embedded Systems">Embedded Systems</option>
+                    <option value="Cloud Computing">Cloud Computing</option>
                 </select>
                 <label for="project-start-date">Starting Date</label>
                 <input type="date" id="project-start-date">
@@ -255,13 +193,71 @@
                 <input type="date" id="project-end-date">
                 <label for="project-status">Project Status</label>
                 <select id="project-status">
-                    <option value="1">In Progress</option>
-                    <option value="2">Completed</option>
-                    <option value="3">Pending</option>
-                    <option value="4">On Hold</option>
-                    <option value="5">Cancelled</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Pending">Pending</option>
+                    <option value="On Hold">On Hold</option>
+                    <option value="Cancelled">Cancelled</option>
                 </select>
-                <button onclick="AddProject()" value="Add Project">Add Project</button>
+                <button onclick="addProject()"  value="Add Project">Add Project</button>
+            </div>
+    </div>
+    <div id="project-info-container" class="project-info-container">
+        <div class="basic-info" id="basic-info">
+            <div class="info-title" id="info-title">
+                <h1 id="project-info-title">Basic Information</h1>
+                <div class="close-button">
+                    <span class="material-symbols-outlined" onclick="CloseProInfo()">close</span>
+                </div>
+            </div>
+            <div class="info">
+            </div>
+        </div>
+        <div class="tasks-info-container" id="tasks-info-container">
+            <div class="info-title">
+                <h1>Tasks</h1>
+            </div>
+            <div class="tasks-info-item">
+                <h4> Task ID: <span class="task-id"> 4 </span> </h4>
+                <h4> Task Name: <span class="task-name"> Design Home Page </span> </h4>
+                <h4> Task Description: <span class="task-description"> Design Home Page </span> </h4>
+                <h4> Task Assigned <span class="task-assigned"> Ali,Osama,Mohammed</span></h4>
+                <h4> Task Status: <span class="task-status"> In Progress </span> </h4>
+            </div>
+            <div class="tasks-info-item">
+                <h4> Task ID: <span class="task-id"> 4 </span> </h4>
+                <h4> Task Name: <span class="task-name"> Design Home Page </span> </h4>
+                <h4> Task Description: <span class="task-description"> Design Home Page </span> </h4>
+                <h4> Task Assigned <span class="task-assigned"> Ali,Osama,Mohammed</span></h4>
+                <h4> Task Status: <span class="task-status"> In Progress </span> </h4>
+            </div>
+            <div class="tasks-info-item">
+                <h4> Task ID: <span class="task-id"> 4 </span> </h4>
+                <h4> Task Name: <span class="task-name"> Design Home Page </span> </h4>
+                <h4> Task Description: <span class="task-description"> Design Home Page </span> </h4>
+                <h4> Task Assigned <span class="task-assigned"> Ali,Osama,Mohammed</span></h4>
+                <h4> Task Status: <span class="task-status"> In Progress </span> </h4>
+            </div>
+            <div class="tasks-info-item">
+                <h4> Task ID: <span class="task-id"> 4 </span> </h4>
+                <h4> Task Name: <span class="task-name"> Design Home Page </span> </h4>
+                <h4> Task Description: <span class="task-description"> Design Home Page </span> </h4>
+                <h4> Task Assigned <span class="task-assigned"> Ali,Osama,Mohammed</span></h4>
+                <h4> Task Status: <span class="task-status"> In Progress </span> </h4>
+            </div>
+            <div class="tasks-info-item">
+                <h4> Task ID: <span class="task-id"> 4 </span> </h4>
+                <h4> Task Name: <span class="task-name"> Design Home Page </span> </h4>
+                <h4> Task Description: <span class="task-description"> Design Home Page </span> </h4>
+                <h4> Task Assigned <span class="task-assigned"> Ali,Osama,Mohammed</span></h4>
+                <h4> Task Status: <span class="task-status"> In Progress </span> </h4>
+            </div>
+            <div class="tasks-info-item">
+                <h4> Task ID: <span class="task-id"> 4 </span> </h4>
+                <h4> Task Name: <span class="task-name"> Design Home Page </span> </h4>
+                <h4> Task Description: <span class="task-description"> Design Home Page </span> </h4>
+                <h4> Task Assigned <span class="task-assigned"> Ali,Osama,Mohammed</span></h4>
+                <h4> Task Status: <span class="task-status"> In Progress </span> </h4>
             </div>
         </div>
     </div>
@@ -276,7 +272,7 @@
                     <option value="assignedStudent">Assigned Student</option>
                 </select>
             </div>
-            <button class="new-task-btn">Create a New Task</button>
+            <button class="new-task-btn" onclick="openCreT()">Create a New Task</button>
         </div>
             <div class="table-container" >
                 <table class="task-table">
@@ -304,6 +300,70 @@
                     </tbody>
                 </table>
             </div>
+    </div>
+    <div class="task-create-container" id="task-create-container">
+        <div class="task-create-header">
+            <div class="title">
+                <h1>Create a New Task</h1>
+            </div>
+            <div class="close-button">
+                <span class="material-symbols-outlined" onclick="closeCreT()">close</span>
+            </div>
+        </div>
+        <div class="task-create-form">
+            <label for="project-name"> Project Title </label>
+            <select id="project-name" name="project-name" >
+                <option value="Website Redesign">Website Redesign</option>
+            </select>
+            <label for="task-name"> Task Name </label>
+            <input type="text" id="task-name" name="task-name" placeholder="Task Name" required>
+            <label for="description"> Description </label>
+            <textarea id="description" name="description" placeholder="Description" required></textarea>
+            <label for="assignedStudent"> Assigned Student </label>
+            <select id="assignedStudent" name="assignedStudent">
+                <option value="Osama"> Osama </option>
+            </select>
+            <label for="status"> Status </label>
+            <select id="status" name="status">
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Pending">Pending</option>
+            </select>
+            <label for="dueDate"> Due Date </label>
+            <input type="date" id="dueDate" name="dueDate" required>
+            <button onclick="addTask()" value="Add Task">Add Task</button>
+        </div>
+    </div>
+    <div class="chat-container" id="chat-container">
+        <div class="contact-list" >
+            <div class="contacts-list-header">
+                <span id="contacts-list-header"> List Of Students</span>
+            </div>
+            <div class="contacts" id="contacts">
+                <div class="contact-username">
+                    <span>Username</span>
+                </div>
+                <div class="contact-username">
+                    <span>Username</span>
+                </div>
+                <div class="contact-username">
+                    <span>Username</span>
+                </div>
+            </div>
+        </div>
+        <div class="chat-messages">
+            <div class="chat-header">
+                <span id="active-contact">Select a contact</span>
+            </div>
+            <div class="messages-container" id="messages-container">
+
+            </div>
+
+            <div class="message-form">
+                <textarea id="message-input" placeholder="Type your message here..."></textarea>
+                <button onclick="sendMessage()" value="Send">Send</button>
+            </div>
+        </div>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
