@@ -1,0 +1,19 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend for tasks managment system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eng-OsamaMansour/TasksManagementSystem.git"
+  },
+  "author": "Osama Mansour",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Eng-OsamaMansour/TasksManagementSystem/issues"
+  },
+  "homepage": "https://github.com/Eng-OsamaMansour/TasksManagementSystem#readme"
+}
