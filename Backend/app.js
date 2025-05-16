@@ -9,13 +9,14 @@ const GraphQLSchema = require('./GraphQL/Schema/SchemaQL');
 const app = express();
 exports.app = app;
 app.use(bodyParser.json());
-
+app.use(require('./middleware/isAuth'));
 /* ──────────── GraphQL ──────────── */
 app.use(
   "/graphql",
   graphqlHTTP({
     schema: GraphQLSchema,
     rootValue: rootValue,
+    context: (req) => req,
     graphiql: true,
   })
 );
