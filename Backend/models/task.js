@@ -8,7 +8,7 @@ const taskSchema = new Schema(
     status: {
       type: String,
       required: true,
-      enum: ["In Progress", "Completed", "Canceled", "Pending"],
+      enum: ["In Progress", "Completed", "Cancelled", "Pending","On Hold"],
     },
     dueDate: { type: String, required: true },
     assignedStudent: {
