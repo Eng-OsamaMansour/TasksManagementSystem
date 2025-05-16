@@ -12,7 +12,8 @@ const taskSchema = new schema({
     },
     status:{
         type: String, 
-        required:true
+        required:true,
+        enum: ['In Progress','Completed','Canceled','Pending']
     },
     dueDate:{
         type: String, 
