@@ -1,0 +1,30 @@
+#footer{
+    display: flex;
+    flex-direction: row;
+    height: 50px;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    border-bottom: 1px solid #444444;
+    background-color: #333333;
+}
+#footer button{
+    width: 80px;
+    height: 30px;
+    background: #f24236;
+    color: white;
+    border: 1px solid #454545;
+    border-radius: 5px;
+}
+.footer-content{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 18%;
+}
+.side-bar-btn{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

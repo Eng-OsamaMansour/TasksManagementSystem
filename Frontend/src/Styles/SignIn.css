@@ -1,0 +1,47 @@
+.SignIn-container{
+    display: flex;
+    width: 20%;
+    height: 40%;
+    position: fixed;
+    top: 25%;
+    left: 40%;
+    background-color: #1e1e1e;
+}
+.SignIn-Form {
+    display: flex;
+    flex-direction: column;
+    justify-content: normal;
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    color: white;
+}
+.SignIn-Form input,button{
+    height: 7%;
+    width: 100%;
+    background-color: #333333;
+    color: white;
+    border: 1px solid gray;
+    border-radius: 7px;
+    margin: 5px;
+}
+.SignIn-Form button{
+    background-color: #4cae50;
+}
+
+.checkbox-container{
+    display: flex;
+    flex-direction: row;
+}
+#stay{
+    height: 15px;
+    width: 15px;
+}
+.SignIn-Form h6{
+    margin-top: -1px;
+    margin-left: 15px;
+    padding: 2px;
+}
+.SignIn-Form a{
+    color: #f24236;
+}
