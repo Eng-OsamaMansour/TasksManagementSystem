@@ -1,5 +1,5 @@
 
-# Student Project Management Backend
+# Tasks Managment System
 
 A Node.js **GraphQL + WebSocket** server with role‑based access control that manages **Users**, **Projects**, **Tasks** and real‑time **messaging** between admins and students. Data is persisted in **MongoDB Atlas** via **Mongoose**.
 
