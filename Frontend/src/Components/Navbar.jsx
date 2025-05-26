@@ -1,6 +1,8 @@
-import '../Styles/Navbar.css'
+import "../Styles/Navbar.css";
+import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
+  const { logout, user } = useAuth();
   return (
     <>
       <div id="footer">
@@ -9,7 +11,13 @@ const Navbar = () => {
         </div>
         <div className="footer-content">
           <h1 id="user-name"> Osama Mansour </h1>
-          <button id="logout-btn" type="button">
+          <button
+            id="logout-btn"
+            onClick={() => {
+              logout();
+            }}
+            type="button"
+          >
             Logout
           </button>
         </div>
