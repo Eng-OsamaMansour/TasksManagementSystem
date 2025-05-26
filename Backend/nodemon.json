@@ -2,8 +2,6 @@
     "env": {
         "MONGO_USER":"tasksystem",
         "MONGO_PASSWORD":"tasksystempass",
-        "MONGO_DB":"tasks-management-system",
-        "JWT_SECRET":"superSecretKey",
-        "TOKEN_EXPIRES":"1d" 
+        "MONGO_DB":"tasks-management-system"
     }
 }

@@ -2,7 +2,7 @@ const Task = require("../../models/task");
 
 module.exports = {
   /* ------- Queries ------- */
-  tasks: async (_, req) => {
+  tasks: async (args,req) => {
     if (!req.isAuth) throw new Error("Unauthenticated");
     const filter = req.role === "admin" ? {} : { assignedStudent: req.userId };
     const docs = await Task.find(filter)
@@ -18,6 +18,7 @@ module.exports = {
       status: TaskInput.status,
       dueDate: TaskInput.dueDate,
       assignedStudent: TaskInput.assignedStudentId,
+      project: TaskInput.projectId
     });
     const res = await t.save();
     return { ...res._doc, _id: res.id };

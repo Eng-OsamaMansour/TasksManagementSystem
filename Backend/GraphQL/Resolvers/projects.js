@@ -1,8 +1,9 @@
+const project = require("../../models/project");
 const Project = require("../../models/project");
 
 module.exports = {
   /* ------- Queries ------- */
-  projects: async (_, req) => {
+  projects: async (args,req) => {
     if (!req.isAuth) throw new Error("Unauthenticated");
     if (req.role === "admin") {
       return Project.find().populate("students");
@@ -13,7 +14,9 @@ module.exports = {
     return docs;
   },
   /* ------- Mutations -------*/
-  createProject: async ({ ProjectInput }) => {
+  createProject: async ({ ProjectInput },req) => {
+    console.log(ProjectInput,req.isAuth);
+    
     if (!req.isAuth || req.role !== "admin") throw new Error("Forbidden");
     const proj = new Project({
       title: ProjectInput.title,

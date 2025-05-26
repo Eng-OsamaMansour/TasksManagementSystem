@@ -58,23 +58,23 @@ module.exports = buildSchema(`
     }
     
     type Query {
-        projects:      [Project!]!
-        tasks:         [Task!]!
+        projects(userOnly: Boolean = false):      [Project!]!
+        tasks(userOnly: Boolean = false):         [Task!]!
         students:      [User!]!      
         me:            User!         
     }
     type Mutation {
         login(username: String!, password: String!): AuthData!
 
-        createProject(ProjectInput: ProjectInput): Project           # admin
-        deleteProject(_id: ID!): Boolean                             # admin
-        updateProjectStatus(_id: ID!, status: String!): Project      # admin
+        createProject(ProjectInput: ProjectInput): Project          
+        deleteProject(_id: ID!): Boolean                            
+        updateProjectStatus(_id: ID!, status: String!): Project      
 
-        createTask(TaskInput: TaskInput): Task                       # admin
-        deleteTask(_id: ID!): Boolean                                # admin
-        updateTaskStatus(_id: ID!, status: String!): Task            # admin OR assigned student
+        createTask(TaskInput: TaskInput): Task                      
+        deleteTask(_id: ID!): Boolean                              
+        updateTaskStatus(_id: ID!, status: String!): Task           
 
-        createUser(UserInput: UserInput): User                       # admin
+        createUser(UserInput: UserInput): User                      
     }
     schema {
         query: Query
